@@ -3,7 +3,9 @@
 } */
 
 .Welcome {
-    background-color: #000000b9;
+    /* border: 5px solid pink; */
+
+    background-color: #0000009c;
     min-height: 100%;
     min-height: 100vh;
     min-height: 100dvh;
@@ -84,4 +86,33 @@
             display: none;
         }
     }
+}
+
+
+
+
+.a-enter-vr, .a-enter-ar {
+    display: none;
+}
+
+.a-dialog, .a-dialog-text, .a-dialog-text-container {
+    color: #000 !important;
+}
+.a-dialog-allow-button {
+    background-color: #FFDA1C !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    /* margin: 0 auto !important; */
+    color: #000;
+    font-weight: 600;
+}
+.a-dialog-deny-button {
+    background-color: #fcfcfc !important;
+    color: #000;
+    outline: 1px solid #000;
+    font-weight: 600;
+    display: none !important;
+}
+.a-dialog-ok-button {
+    background-color: rgb(0, 162, 255) !important;
 }

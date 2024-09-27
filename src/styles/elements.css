@@ -31,6 +31,11 @@ p {
 /* TIPOGRAFIA */
 
 
+.hidden {
+    opacity: 0;
+}
+
+
 
 /* ANIMATIONS */
 @keyframes showModal {

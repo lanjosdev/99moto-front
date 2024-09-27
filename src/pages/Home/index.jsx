@@ -1,9 +1,10 @@
 // Hooks / Funcionalidades / Libs:
 import { useState, useEffect } from 'react';
-//import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Cookies from "js-cookie";
 
 // Components:
+import { AframeGame } from '../../components/aframe-game';
 // import { toast } from "react-toastify";
 
 // Utils:
@@ -21,6 +22,11 @@ export default function Home() {
     const [step, setStep] = useState(1);
     const [animateMode, setAnimateMode] = useState('');
 
+    const [enableGame, setEnableGame] = useState(false);
+    const [startGame, setStartGame] = useState(false);
+
+    const navigate = useNavigate();
+
     // const tokenCookie = Cookies.get('userToken');
 
     
@@ -28,9 +34,17 @@ export default function Home() {
         async function carregaProjetos()
         {
             console.log('Effect /home');
+
+            // Adiciona o listener ao clicar no documento
+            document.addEventListener("fimJogo", ()=> setTimeout(()=> navigate('/result'), 1000));
+        
+            // Limpa o listener quando o componente desmontar
+            return () => {
+                document.removeEventListener("fimJogo", ()=> setTimeout(()=> navigate('/result'), 1000));
+            };
         }
         carregaProjetos();
-    }, []);
+    }, [navigate]);
 
 
     function handleBackStep() {
@@ -38,7 +52,7 @@ export default function Home() {
             setAnimateMode('fadeInLeft');
             setStep(step => step - 1);
 
-            // limpa a animação depos de 600ms
+            // limpa a animação depois de 600ms
             setTimeout(()=> setAnimateMode(''), 600); 
         }
     }
@@ -47,12 +61,15 @@ export default function Home() {
             setAnimateMode('fadeInRight');
             setStep(step => step + 1);
 
-            // limpa a animação depos de 600ms
+            // limpa a animação depois de 600ms
             setTimeout(()=> setAnimateMode(''), 600);    
         }
-
+        if(step == 2) {
+            setEnableGame(true);
+        }
         if(step == lastStep) {
-            alert('Abre o jogo');
+            console.log('Começa o jogo!');
+            setStartGame(true);
         }    
     }
     
@@ -60,10 +77,8 @@ export default function Home() {
 
     return (
         <main className='Page Home'>
-            {/* COMPONENTE AFRAME AQUI */}
 
-
-
+            {!startGame &&
             <div className="Welcome grid">
                 <div className="top">
                     <img className={step == 1 ? 'hidden' : ''} src={LogoBig} alt="Logo da campanha" />
@@ -121,9 +136,12 @@ export default function Home() {
                     </div>
                 </div>
             </div>
+            }
 
-
-
+            {enableGame &&
+            <AframeGame startGame={startGame} setStartGame={setStartGame} /> 
+            }  
+                  
         </main>
     )
 }

@@ -87,7 +87,7 @@ body {
     font-size: 1.6rem; /* Pra garantir q o padrao seja 16px no navegador*/
     color: var(--color-text);
 
-    /* overflow: hidden; */
+    overflow: hidden;
 
     /* position: relative;
     display: flex;
@@ -95,7 +95,7 @@ body {
     align-items: center; */
 }
 body, input, textarea, button, select, a {
-    font-family: var(--font-main), Verdana, sans-serif;
+    font-family: var(--font-main), sans-serif;
 }
 
 [disabled] {
