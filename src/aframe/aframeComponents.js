@@ -1,4 +1,5 @@
-const meuEvento = new Event("fimJogo");
+const eventoFimJogo = new Event("fimJogo");
+const eventoOrientacao = new Event("orientationOk");
 console.log('Arquivo components aframe');
 
 AFRAME.registerComponent('init-permissions', {
@@ -9,17 +10,36 @@ AFRAME.registerComponent('init-permissions', {
     init: function() {
         // Editar modal de solicitação de permissões:
         // device-orientation-permission-ui="denyButtonText: Rejeitar; allowButtonText: Aceitar; deviceMotionMessage: Texto aqui"
-        this.el.setAttribute('device-orientation-permission-ui', "allowButtonText: Entendi; deviceMotionMessage: Para seguir com a experiência é necessário permitir o acesso ao sensor de movimento e câmera do dispositivo.");
+        this.el.setAttribute('device-orientation-permission-ui', "allowButtonText: Entendi; deviceMotionMessage: Para seguir com a experiência é necessário permitir o acesso ao sensor de movimento/orientação e câmera do dispositivo.");
 
         // this.el.addEventListener('deviceorientationpermissionrequested', ()=> alert('Para seguir com a experiência é necessario autorizar acesso ao movimento e câmera do celular.'));
         // Mensagem quando o acesso for negado:
         this.el.addEventListener('deviceorientationpermissionrejected', ()=> alert('Status: Permissão de movimento foi negada. Para permitir o acesso, vá para as configurações do navegador e ative o acesso aos sensores.'));
-
+        
+        
+        if(window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission) {
         // Para iOS 13+:
-        this.el.addEventListener('deviceorientationpermissiongranted', this.initCamera);
-
+            this.el.addEventListener('deviceorientationpermissiongranted', ()=> {
+                // Verifica se as permissões de movimento foi consedido
+                DeviceMotionEvent.requestPermission()
+                .then(response => {
+                    if(response === 'granted') {
+                        // Permissão aceita
+                        this.initCamera();
+                    }
+                    else {
+                        // Permissão negada
+                        alert('Foi negado o acesso ao movimento/orientação do dispositivo. Para permitir o acesso, vá para as configurações do navegador e ative o acesso aos sensores.');
+                        ////Não seguir no jogo
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao solicitar a permissão:', error);
+                });
+            });
+        }
+        else {
         // Para dispositivos que não solicita permissão de deviceorientation:
-        if(!(window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission)) {
             this.initCamera();
         }
     },
@@ -35,6 +55,16 @@ AFRAME.registerComponent('init-permissions', {
         
         // Verifica se o navegador suporta getUserMedia
         if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            // try {
+            //     const stream = await navigator.mediaDevices.getUserMedia({ video:videoConstraints });
+            //     videoRef.srcObject = stream;
+            //     videoRef.play();
+            // } 
+            // catch(error) {
+            //     console.error('Erro ao acessar a câmera:', error);
+            //     // Exibir uma mensagem amigável para o usuário
+            //     alert('Não foi possível acessar a câmera. Para permitir o acesso, vá para as configurações do navegador e ative o acesso.');
+            // }
             navigator.mediaDevices.getUserMedia({ video: videoConstraints })
                 .then(stream => {
                     videoRef.srcObject = stream;
@@ -42,11 +72,15 @@ AFRAME.registerComponent('init-permissions', {
                 })
                 .catch(error => {
                     console.error('Erro ao acessar a câmera: ', error);
+                    // Exibir uma mensagem amigável para o usuário
+                    alert('Não foi possível acessar a câmera. Para permitir o acesso, vá para as configurações do navegador e ative o acesso (após isso atualize a página).');
                 });
         } 
         else {
             console.error('getUserMedia não é suportado no navegador.');
         }
+
+        document.dispatchEvent(eventoOrientacao);
     }
 });
 
@@ -121,7 +155,7 @@ AFRAME.registerComponent('set-stars', {
         }
         if(e.target.id == 'star5' && this.estrelas[this.targetStar].id == 'star5') {
             // alert('fim de jogo');
-            document.dispatchEvent(meuEvento);
+            document.dispatchEvent(eventoFimJogo);
         }
     }
 });

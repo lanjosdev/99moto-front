@@ -20,15 +20,16 @@ import './style.css';
 export function AframeGame({ startGame, setStartGame }) {
     // const [startGame, setStartGame] = useState(false);
     // const entityRef = useRef(null);
-
+    // const teste = true;
 
     useEffect(()=> {
         AFRAME.registerComponent('detect-start-game', {
             schema: { type: 'boolean' },
 
             init: function() {
-                setTimeout(()=> this.el.addEventListener("mouseenter", ()=> this.initGame()), 4000);
-                
+                console.log(this.data)
+                this.el.addEventListener("mouseenter", ()=> this.initGame());  
+                document.addEventListener("orientationOk", ()=> setTimeout(()=> this.el.classList.add('collidable'), 5000));
             },
 
             initGame: function() {
@@ -68,7 +69,7 @@ export function AframeGame({ startGame, setStartGame }) {
 
                 {/* Entidades da cena */}
                 <a-camera id="camera-target" look-controls="reverseMouseDrag: true">
-                    <a-cursor color="red" raycaster="far: 100" visible="false"></a-cursor>
+                    <a-cursor color="red" raycaster="far: 100; objects: .collidable;" visible="false"></a-cursor>
                 </a-camera>
 
 
@@ -79,15 +80,15 @@ export function AframeGame({ startGame, setStartGame }) {
                 ) : (
 
                 <a-entity className="constelacao" position="0 0 0" visible="true" set-stars>
-                    <a-image id="star1" className="clickable" src="#starTexture" width="5.5" height="5.5" opacity="0.2"></a-image>
+                    <a-image id="star1" class="collidable" src="#starTexture" width="5.5" height="5.5" opacity="0.2"></a-image>
                 
-                    <a-image id="star2" className="clickable" src="#starTexture" width="5.5" height="5.5" opacity="0.2"></a-image>
+                    <a-image id="star2" class="collidable" src="#starTexture" width="5.5" height="5.5" opacity="0.2"></a-image>
 
-                    <a-image id="star3" className="clickable" src="#starTexture" width="5.5" height="5.5" opacity="0.2"></a-image>
+                    <a-image id="star3" class="collidable" src="#starTexture" width="5.5" height="5.5" opacity="0.2"></a-image>
 
-                    <a-image id="star4" className="clickable" src="#starTexture" width="5.5" height="5.5" opacity="0.2"></a-image>
+                    <a-image id="star4" class="collidable" src="#starTexture" width="5.5" height="5.5" opacity="0.2"></a-image>
 
-                    <a-image id="star5" className="clickable" src="#starTexture" width="5.5" height="5.5" opacity="0.2"></a-image>
+                    <a-image id="star5" class="collidable" src="#starTexture" width="5.5" height="5.5" opacity="0.2"></a-image>
                 </a-entity>
 
                 )}

@@ -1,11 +1,16 @@
-/* .Page {
-    background-color: #4ce6e6;
-} */
+.Page {
+    /* background-color: #4ce6e6; */
+    display: flex;
+    justify-content: center;
+}
 
 .Welcome {
-    /* border: 5px solid pink; */
+    border: 5px solid pink;
+    position: absolute;
+    top: 0;
+    z-index: 10;
 
-    background-color: #0000009c;
+    background-color: var(--color-bg);
     min-height: 100%;
     min-height: 100vh;
     min-height: 100dvh;
@@ -17,7 +22,7 @@
     justify-content: space-between;
     place-items: center;
     /* align-items: center; */
-
+    /* display: none; */
     .top {
         img {
             max-width: 37rem;

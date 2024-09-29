@@ -1,14 +1,14 @@
 .Aframe-game {
-    position: absolute;
+    /* position: absolute;
     top: 0;
     left: 0;
-    z-index: -1;
+    z-index: -1; */
 
-    /* border: 5px solid green; */
+    border: 5px solid green;
     width: 100%;
     min-height: 100vh;
     min-height: 100dvh;
-    background-color: #051122;
+    background-color: #020811;
     /* overflow: hidden; */
 
     display: flex;
