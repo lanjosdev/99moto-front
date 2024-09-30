@@ -28,6 +28,7 @@ export function AframeGame({ startGame, setStartGame }) {
             init: function() {
                 // console.log(this.data)
                 this.el.addEventListener("mouseenter", ()=> this.initGame());  
+                
                 document.addEventListener("orientacaoStatus", (e)=> {
                     if(e.detail.orientacao == "Permitida") {
                         setTimeout(()=> this.el.classList.add('collidable'), 5000);
@@ -108,11 +109,15 @@ export function AframeGame({ startGame, setStartGame }) {
                 
             </a-scene>
 
-            <div className={`mira-container ${!startGame ? 'hidden' : ''}`}>
-                {/* <div class="mira-seta"> */}
-                    <img id="mira-moto" src={miraMoto} alt="" />
-                    <img id="seta-moto" src={setaMoto} alt="" />
-                {/* </div> */}
+            <div className={`text-mira ${!startGame ? 'hidden' : ''}`}>
+                {startGame && <p className='invisible'>Siga a seta</p>}
+
+                <div className='mira-container'>
+                    {/* <div class="mira-seta"> */}
+                        <img id="mira-moto" src={miraMoto} alt="" />
+                        <img id="seta-moto" src={setaMoto} alt="" />
+                    {/* </div> */}
+                </div>
             </div>
 
             <div className={`rodape ${!startGame ? 'hidden' : ''}`}>

@@ -4,7 +4,7 @@
     left: 0;
     z-index: -1; */
 
-    border: 5px solid green;
+    /* border: 5px solid green; */
     width: 100%;
     min-height: 100vh;
     min-height: 100dvh;
@@ -24,8 +24,23 @@
       /* border: 5px solid red; */
     }
 
-    .mira-container {
-        position: absolute;
+    .text-mira {
+      position: absolute;
+      transform: translateY(-1rem);
+
+      p {
+        opacity: 0;
+        color: var(--color-primary);
+        text-transform: uppercase;
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 600;
+
+        transform: translateY(-5rem);
+        transition: all .3s ease;
+      }
+
+      .mira-container {
         padding: 0 80px;
         max-width: 370px;
         
@@ -49,6 +64,7 @@
             padding: 0 52px;
           }
         /* } */
+      }
     }
 
     .rodape {

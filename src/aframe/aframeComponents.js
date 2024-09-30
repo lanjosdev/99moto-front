@@ -1,4 +1,6 @@
 console.log('Arquivo components aframe');
+import Cookies from "js-cookie";
+
 const eventoFimJogo = new Event("fimJogo");
 const eventoPermissoesPermitidas = new CustomEvent('orientacaoStatus', {
     detail: { orientacao: 'Permitida', camera: 'Permitida' }
@@ -30,6 +32,7 @@ AFRAME.registerComponent('init-permissions', {
         
         if(window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission) {
         // Para iOS 13+:
+            Cookies.set('device99', 'iphone', { expires: 7 });
             this.el.addEventListener('deviceorientationpermissiongranted', ()=> {
                 // Verifica se as permissões de movimento foi consedido
                 DeviceMotionEvent.requestPermission()
@@ -52,6 +55,7 @@ AFRAME.registerComponent('init-permissions', {
         }
         else {
         // Para dispositivos que não solicita permissão de deviceorientation:
+            Cookies.set('device99', 'android', { expires: 7 });
             this.initCamera();
         }
     },
@@ -108,7 +112,7 @@ AFRAME.registerComponent('set-stars', {
         this.camera = document.getElementById('camera-target');
         var coordenadas = [
             {
-                estrela1: { x: 51.86, y: 39.85, z: -18.18 },
+                estrela1: { x: 31.34, y: 25.02, z: -11.58 },
                 estrela2: { x: 24.070, y: 34.85, z: 11.36 },
                 estrela3: { x: 10.48, y: 40.51, z: -8.327 },
                 estrela4: { x: -12.27, y: 42.94, z: -15.55 },

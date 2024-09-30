@@ -38,6 +38,21 @@ p {
 
 
 /* ANIMATIONS */
+@keyframes invisible {
+    0% {
+        opacity: 1; 
+    }
+    80% {
+        opacity: 0.9; 
+    }
+    100% {
+        opacity: 0;
+    }
+}
+.invisible {
+    animation: invisible 3.3s ease-in-out;
+}
+
 @keyframes showModal {
     0% {
         opacity: 0; 

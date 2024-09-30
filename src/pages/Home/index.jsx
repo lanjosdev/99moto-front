@@ -1,10 +1,11 @@
 // Hooks / Funcionalidades / Libs:
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from "js-cookie";
 
 // Components:
 import { AframeGame } from '../../components/aframe-game';
+import confetti from 'canvas-confetti';
 // import { toast } from "react-toastify";
 
 // Utils:
@@ -31,37 +32,90 @@ export default function Home() {
     // const tokenCookie = Cookies.get('userToken');
 
     
+    const acaoFimJogo = useCallback(() => {
+        var defaults = {
+            spread: 360,
+            ticks: 50,
+            gravity: 0,
+            decay: 0.94,
+            startVelocity: 30,
+            colors: ['FFE400', 'FFBD00', 'E89400', 'FFCA6C', 'FDFFB8']
+        };
+        
+        function shoot() {
+            confetti({
+                ...defaults,
+                particleCount: 40,
+                scalar: 1.2,
+                shapes: ['star']
+            });
+            
+            confetti({
+                ...defaults,
+                particleCount: 10,
+                scalar: 0.75,
+                shapes: ['circle']
+            });
+        }
+        
+        setTimeout(shoot, 0);
+        setTimeout(shoot, 100);
+        setTimeout(shoot, 200);
+        
+        setTimeout(()=> navigate('/result'), 1000);
+    }, [navigate]);
+
+    const verificaPermissoes = useCallback((e) => {
+        if(e.detail.orientacao == "Permitida") {
+            let status = 'permissao-minima';
+            if(e.detail.camera == "Permitida") {
+                status = 'permissao-total';
+            }
+
+            setStatusPermissoes(status);
+        } 
+        else {
+            setStatusPermissoes('negada');
+        }
+        // else {
+        //     //logica caso não siga quando orientacao e camera for negadas
+        // }
+    }, []);
+
     useEffect(()=> {
         async function carregaProjetos()
         {
             console.log('Effect /home');
 
-            // Adiciona o listener ao clicar no documento
-            document.addEventListener("fimJogo", ()=> setTimeout(()=> navigate('/result'), 1000));
-            document.addEventListener("orientacaoStatus", (e)=> {
-                if(e.detail.orientacao == "Permitida") {
-                    let status = 'permissao-minima';
-                    if(e.detail.camera == "Permitida") {
-                        status = 'permissao-total';
-                    }
+            // Adiciona o listener no documento
+            document.addEventListener("fimJogo", acaoFimJogo);
+            document.addEventListener("orientacaoStatus", verificaPermissoes);
 
-                    setStatusPermissoes(status);
-                } 
-                else {
-                    setStatusPermissoes('negada');
-                }
-                // else {
-                //     //logica caso não siga quando orientacao e camera for negadas
-                // }
-            });
+            document.addEventListener('click', ()=> {
+                // function requestFullScreen() {
+                    const elem = document.documentElement;
+                  
+                    if(elem.requestFullscreen) {
+                      elem.requestFullscreen();
+                    } else if(elem.mozRequestFullScreen) { // Firefox
+                      elem.mozRequestFullScreen();
+                    } else if(elem.webkitRequestFullscreen) { // Chrome, Safari, Opera
+                      elem.webkitRequestFullscreen();
+                    } else if(elem.msRequestFullscreen) { // IE/Edge
+                      elem.msRequestFullscreen();
+                    }
+                //   }
+                  
+            })
         
             // Limpa o listener quando o componente desmontar
             return () => {
-                document.removeEventListener("fimJogo", ()=> setTimeout(()=> navigate('/result'), 1000));
+                document.removeEventListener("fimJogo", acaoFimJogo);
+                document.removeEventListener("orientacaoStatus", verificaPermissoes);
             };
         }
         carregaProjetos();
-    }, [navigate]);
+    }, [acaoFimJogo, verificaPermissoes]);
 
 
     function handleBackStep() 
