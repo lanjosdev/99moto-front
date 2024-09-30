@@ -1,6 +1,14 @@
-const eventoFimJogo = new Event("fimJogo");
-const eventoOrientacao = new Event("orientationOk");
 console.log('Arquivo components aframe');
+const eventoFimJogo = new Event("fimJogo");
+const eventoPermissoesPermitidas = new CustomEvent('orientacaoStatus', {
+    detail: { orientacao: 'Permitida', camera: 'Permitida' }
+});
+const eventoApenasOrientacao = new CustomEvent('orientacaoStatus', {
+    detail: { orientacao: 'Permitida', camera: 'Negada' }
+});
+const eventoPermissoesNegadas = new CustomEvent('orientacaoStatus', {
+    detail: { orientacao: 'Negada', camera: 'Negada' }
+});
 
 AFRAME.registerComponent('init-permissions', {
     schema: {
@@ -14,7 +22,10 @@ AFRAME.registerComponent('init-permissions', {
 
         // this.el.addEventListener('deviceorientationpermissionrequested', ()=> alert('Para seguir com a experiência é necessario autorizar acesso ao movimento e câmera do celular.'));
         // Mensagem quando o acesso for negado:
-        this.el.addEventListener('deviceorientationpermissionrejected', ()=> alert('Status: Permissão de movimento foi negada. Para permitir o acesso, vá para as configurações do navegador e ative o acesso aos sensores.'));
+        this.el.addEventListener('deviceorientationpermissionrejected', ()=> {
+            document.dispatchEvent(eventoPermissoesNegadas);
+            alert('Status: Permissão de movimento foi negada. Para permitir o acesso, vá para as configurações do navegador e ative o acesso aos sensores.');
+        });
         
         
         if(window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission) {
@@ -29,8 +40,9 @@ AFRAME.registerComponent('init-permissions', {
                     }
                     else {
                         // Permissão negada
-                        alert('Foi negado o acesso ao movimento/orientação do dispositivo. Para permitir o acesso, vá para as configurações do navegador e ative o acesso aos sensores.');
                         ////Não seguir no jogo
+                        document.dispatchEvent(eventoPermissoesNegadas);
+                        alert('Foi negado o acesso ao movimento/orientação do dispositivo. Para permitir o acesso, vá para as configurações do navegador e ative o acesso aos sensores.');
                     }
                 })
                 .catch(error => {
@@ -69,18 +81,18 @@ AFRAME.registerComponent('init-permissions', {
                 .then(stream => {
                     videoRef.srcObject = stream;
                     videoRef.play();
+                    document.dispatchEvent(eventoPermissoesPermitidas);
                 })
                 .catch(error => {
                     console.error('Erro ao acessar a câmera: ', error);
                     // Exibir uma mensagem amigável para o usuário
+                    document.dispatchEvent(eventoApenasOrientacao);
                     alert('Não foi possível acessar a câmera. Para permitir o acesso, vá para as configurações do navegador e ative o acesso (após isso atualize a página).');
                 });
         } 
         else {
             console.error('getUserMedia não é suportado no navegador.');
         }
-
-        document.dispatchEvent(eventoOrientacao);
     }
 });
 

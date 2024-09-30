@@ -21,6 +21,7 @@ export default function Home() {
     const lastStep = 3;
     const [step, setStep] = useState(1);
     const [animateMode, setAnimateMode] = useState('');
+    const [statusPermissoes, setStatusPermissoes] = useState('');
 
     const [enableGame, setEnableGame] = useState(false);
     const [startGame, setStartGame] = useState(false);
@@ -37,6 +38,22 @@ export default function Home() {
 
             // Adiciona o listener ao clicar no documento
             document.addEventListener("fimJogo", ()=> setTimeout(()=> navigate('/result'), 1000));
+            document.addEventListener("orientacaoStatus", (e)=> {
+                if(e.detail.orientacao == "Permitida") {
+                    let status = 'permissao-minima';
+                    if(e.detail.camera == "Permitida") {
+                        status = 'permissao-total';
+                    }
+
+                    setStatusPermissoes(status);
+                } 
+                else {
+                    setStatusPermissoes('negada');
+                }
+                // else {
+                //     //logica caso não siga quando orientacao e camera for negadas
+                // }
+            });
         
             // Limpa o listener quando o componente desmontar
             return () => {
@@ -47,7 +64,8 @@ export default function Home() {
     }, [navigate]);
 
 
-    function handleBackStep() {
+    function handleBackStep() 
+    {
         if(step > 1) {
             setAnimateMode('fadeInLeft');
             setStep(step => step - 1);
@@ -56,7 +74,8 @@ export default function Home() {
             setTimeout(()=> setAnimateMode(''), 600); 
         }
     }
-    function handleNextStep() { 
+    function handleNextStep() 
+    { 
         if(step < lastStep) {
             setAnimateMode('fadeInRight');
             setStep(step => step + 1);
@@ -64,13 +83,21 @@ export default function Home() {
             // limpa a animação depois de 600ms
             setTimeout(()=> setAnimateMode(''), 600);    
         }
+
         if(step == 2) {
             setEnableGame(true);
         }
+
         if(step == lastStep) {
-            console.log('Começa o jogo!');
-            setStartGame(true);
-        }    
+            if(statusPermissoes == 'permissao-minima' || statusPermissoes == 'permissao-total') {
+                console.log('Começa o jogo!');
+                setStartGame(true);
+            }
+
+            if(statusPermissoes == 'negada'){
+                alert('Permissão de movimento foi negada. Para seguir com a experiência é necessário ir nas configurações do navegador e ative o acesso aos sensores.');
+            }
+        }   
     }
     
 
@@ -79,7 +106,7 @@ export default function Home() {
         <main className='Page Home'>
 
             {!startGame &&
-            <div className="Welcome grid">
+            <div className={`Welcome grid ${statusPermissoes}`}>
                 <div className="top">
                     <img className={step == 1 ? 'hidden' : ''} src={LogoBig} alt="Logo da campanha" />
                 </div>

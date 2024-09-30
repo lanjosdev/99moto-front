@@ -20,16 +20,22 @@ import './style.css';
 export function AframeGame({ startGame, setStartGame }) {
     // const [startGame, setStartGame] = useState(false);
     // const entityRef = useRef(null);
-    // const teste = true;
 
     useEffect(()=> {
         AFRAME.registerComponent('detect-start-game', {
             schema: { type: 'boolean' },
 
             init: function() {
-                console.log(this.data)
+                // console.log(this.data)
                 this.el.addEventListener("mouseenter", ()=> this.initGame());  
-                document.addEventListener("orientationOk", ()=> setTimeout(()=> this.el.classList.add('collidable'), 5000));
+                document.addEventListener("orientacaoStatus", (e)=> {
+                    if(e.detail.orientacao == "Permitida") {
+                        setTimeout(()=> this.el.classList.add('collidable'), 5000);
+                    }
+                    else {
+                        setTimeout(()=> alert('Permissão de movimento foi negada. Para seguir com a experiência é necessário ir nas configurações do navegador e ative o acesso aos sensores.'), 8000);
+                    }
+                });
             },
 
             initGame: function() {
