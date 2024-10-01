@@ -91,22 +91,22 @@ export default function Home() {
             document.addEventListener("fimJogo", acaoFimJogo);
             document.addEventListener("orientacaoStatus", verificaPermissoes);
 
-            document.addEventListener('click', ()=> {
-                // function requestFullScreen() {
-                    const elem = document.documentElement;
+            // document.addEventListener('click', ()=> {
+            //     // function requestFullScreen() {
+            //         const elem = document.documentElement;
                   
-                    if(elem.requestFullscreen) {
-                      elem.requestFullscreen();
-                    } else if(elem.mozRequestFullScreen) { // Firefox
-                      elem.mozRequestFullScreen();
-                    } else if(elem.webkitRequestFullscreen) { // Chrome, Safari, Opera
-                      elem.webkitRequestFullscreen();
-                    } else if(elem.msRequestFullscreen) { // IE/Edge
-                      elem.msRequestFullscreen();
-                    }
-                //   }
+            //         if(elem.requestFullscreen) {
+            //           elem.requestFullscreen();
+            //         } else if(elem.mozRequestFullScreen) { // Firefox
+            //           elem.mozRequestFullScreen();
+            //         } else if(elem.webkitRequestFullscreen) { // Chrome, Safari, Opera
+            //           elem.webkitRequestFullscreen();
+            //         } else if(elem.msRequestFullscreen) { // IE/Edge
+            //           elem.msRequestFullscreen();
+            //         }
+            //     //   }
                   
-            })
+            // })
         
             // Limpa o listener quando o componente desmontar
             return () => {
