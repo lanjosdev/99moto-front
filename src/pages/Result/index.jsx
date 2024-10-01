@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 // import { primeiraPalavra } from '../../utils/formatarStrings';
 
 // Assets:
-import circleVoucher from '../../assets/circulo-check.png';
+// import circleVoucher from '../../assets/circulo-check.png';
 import logo99 from '../../assets/logoBig.png';
 
 // Estilo:
@@ -54,7 +54,7 @@ export default function Result() {
 
                     <div className='mid'>
                         <div className="circle-voucher">
-                            <img src={circleVoucher} alt="" />
+                            <img src='' alt="" />
                             <p onClick={handleCopiarVoucher}>00025976</p>
                         </div>
                     </div>

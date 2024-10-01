@@ -21,8 +21,8 @@ body:has(.Checkout) {
 /* TIPOGRAFIA */
 h1, h2, h3 {
     text-transform: uppercase;
-    font-weight: 800;
-    letter-spacing: 2px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
 }
 p {
     line-height: 100%;
@@ -30,10 +30,25 @@ p {
 }
 /* TIPOGRAFIA */
 
-
+/* ESTADOS */
 .hidden {
     opacity: 0;
 }
+/* ESTADOS */
+
+/* COMPONENTES */
+.btn-primary {
+    background-color: var(--color-primary);
+    /* height: 5rem; */
+    padding: 3rem 7rem;
+    border-radius: 13px;
+
+    font-size: 2.6rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    line-height: 0;
+}
+/* COMPONENTES */
 
 
 
@@ -115,11 +130,11 @@ p {
 @keyframes fadeInRight {
     from {
       opacity: 0;
-      transform: translateX(100%);
+      /* transform: translateX(100%); */
     }
     to {
       opacity: 1;
-      transform: translateX(0%);
+      /* transform: translateX(0%); */
     }
 }
 .fadeInRight {

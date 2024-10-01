@@ -11,7 +11,7 @@ import starImage from '../../assets/Estrela.png';
 import bgFake from '../../assets/360-image.jpg';
 import miraMoto from '../../assets/mira-moto.png';
 import setaMoto from '../../assets/seta-guia.png';
-import logoFooter from '../../assets/logoFooter.png';
+import logoHeader from '../../assets/logo-header.png';
 
 // Estilo:
 import './style.css';
@@ -31,7 +31,7 @@ export function AframeGame({ startGame, setStartGame }) {
                 
                 document.addEventListener("orientacaoStatus", (e)=> {
                     if(e.detail.orientacao == "Permitida") {
-                        setTimeout(()=> this.el.classList.add('collidable'), 5000);
+                        setTimeout(()=> this.el.classList.add('collidable'), 4000);
                     }
                     else {
                         setTimeout(()=> alert('Permissão de movimento foi negada. Para seguir com a experiência é necessário ir nas configurações do navegador e ative o acesso aos sensores.'), 8000);
@@ -121,7 +121,7 @@ export function AframeGame({ startGame, setStartGame }) {
             </div>
 
             <div className={`rodape ${!startGame ? 'hidden' : ''}`}>
-                <img src={logoFooter} alt="" />
+                <img src={logoHeader} alt="" />
             </div>
 
         </div>

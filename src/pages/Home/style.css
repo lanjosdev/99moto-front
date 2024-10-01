@@ -6,7 +6,7 @@
 
 .Welcome {
     /* border: 5px solid pink; */
-    position: absolute;
+    position: fixed;
     top: 0;
     z-index: 10;
 
@@ -22,14 +22,39 @@
     justify-content: space-between;
     place-items: center;
     /* align-items: center; */
-    /* display: none; */
 
     overflow: hidden;
 
     transition: all .4s ease;
-    &.permissao-total {
-        background-color: #0000008c;
+
+    .bg-welcome {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        max-width: 520px;
+        height: 100vh;
+        height: 100dvh;
+        z-index: -1;
+
+        background-image: url(../../../bg-app.png);
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+
+        /* display: flex;
+        justify-content: center;
+        width: 100%;
+        max-width: 520px; */
+
+        /* img {
+            max-width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            object-fit: cover;
+            opacity: 0.5;
+        } */
     }
+
 
     .top {
         img {
@@ -43,14 +68,24 @@
     }
 
     .mid {
-        h1 {
-            font-size: 3.3rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4rem;
+
+        h2 {
+            font-size: 2.6rem;
+            text-align: center;
+
+            span {
+                font-weight: 300;
+            }
         }
     }
 
     .bottom {
         p {            
-            font-size: 2.3rem;
+            font-size: 2.2rem;
             text-align: center;
         }
     }
@@ -99,6 +134,73 @@
 
         br {
             display: none;
+        }
+    }
+}
+
+.Welcome.true {
+    padding: 2.3rem 3rem;
+    justify-content: flex-start;
+    gap: 5.5rem;
+
+    &.permissao-total {
+        background-color: #0000003d;
+
+        .bg-welcome {
+            opacity: 0.6;
+        }
+    }
+
+    .mid {
+        gap: 4rem;
+
+        > p {
+            font-size: 2.6rem;
+            font-weight: 700;
+            text-align: center;
+        }
+        img {
+            max-width: 10rem;
+        }
+        .text-constelacao {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 3rem;
+            width: 100%;
+
+            p {
+                font-size: 2rem;
+                max-width: 15rem;
+
+                span {
+                    color: var(--color-primary);
+                    font-weight: 600;
+                }
+            }
+            img {
+                max-width: 17rem;
+            }
+        }
+    }
+
+    .bottom {
+        /* background-color: red; */
+        position: absolute;
+        bottom: 2rem;
+
+        img {
+            max-width: 12rem;
+        }
+        p {
+            position: absolute;
+            top: 50%;
+            left: -10px;
+            transform: translate(-100%, -50%);
+            
+            font-size: 2.4rem;
+            font-weight: 500;
+            text-align: center;
         }
     }
 }

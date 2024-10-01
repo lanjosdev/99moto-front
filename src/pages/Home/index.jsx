@@ -13,15 +13,17 @@ import confetti from 'canvas-confetti';
 
 // Assets:
 import LogoBig from '../../assets/logoBig.png';
+import LogoHeader from '../../assets/logo-header.png';
+import MaoInstrucao from '../../assets/mao-instrucao.png';
+import ConstelacaoInstrucao from '../../assets/constelacao-instrucao.png';
+import MotoStart from '../../assets/moto-start.png';
 
 // Estilo:
 import './style.css';
 
 
 export default function Home() {
-    const lastStep = 3;
-    const [step, setStep] = useState(1);
-    const [animateMode, setAnimateMode] = useState('');
+    // const [animateMode, setAnimateMode] = useState('');
     const [statusPermissoes, setStatusPermissoes] = useState('');
 
     const [enableGame, setEnableGame] = useState(false);
@@ -68,6 +70,7 @@ export default function Home() {
     const verificaPermissoes = useCallback((e) => {
         if(e.detail.orientacao == "Permitida") {
             let status = 'permissao-minima';
+
             if(e.detail.camera == "Permitida") {
                 status = 'permissao-total';
             }
@@ -83,13 +86,13 @@ export default function Home() {
     }, []);
 
     useEffect(()=> {
-        async function carregaProjetos()
+        async function initHome()
         {
             console.log('Effect /home');
 
             // Adiciona o listener no documento
-            document.addEventListener("fimJogo", acaoFimJogo);
             document.addEventListener("orientacaoStatus", verificaPermissoes);
+            document.addEventListener("fimJogo", acaoFimJogo);
 
             // document.addEventListener('click', ()=> {
             //     // function requestFullScreen() {
@@ -110,114 +113,95 @@ export default function Home() {
         
             // Limpa o listener quando o componente desmontar
             return () => {
-                document.removeEventListener("fimJogo", acaoFimJogo);
                 document.removeEventListener("orientacaoStatus", verificaPermissoes);
+                document.removeEventListener("fimJogo", acaoFimJogo);
             };
         }
-        carregaProjetos();
+        initHome();
     }, [acaoFimJogo, verificaPermissoes]);
 
 
-    function handleBackStep() 
-    {
-        if(step > 1) {
-            setAnimateMode('fadeInLeft');
-            setStep(step => step - 1);
-
-            // limpa a animação depois de 600ms
-            setTimeout(()=> setAnimateMode(''), 600); 
-        }
-    }
-    function handleNextStep() 
+    function handleEntrarGame() 
     { 
-        if(step < lastStep) {
-            setAnimateMode('fadeInRight');
-            setStep(step => step + 1);
-
-            // limpa a animação depois de 600ms
-            setTimeout(()=> setAnimateMode(''), 600);    
-        }
-
-        if(step == 2) {
-            setEnableGame(true);
-        }
-
-        if(step == lastStep) {
-            if(statusPermissoes == 'permissao-minima' || statusPermissoes == 'permissao-total') {
-                console.log('Começa o jogo!');
-                setStartGame(true);
-            }
-
-            if(statusPermissoes == 'negada'){
-                alert('Permissão de movimento foi negada. Para seguir com a experiência é necessário ir nas configurações do navegador e ative o acesso aos sensores.');
-            }
-        }   
+        setEnableGame(true);
     }
+
+    function handleStartGame() 
+    {
+        if(statusPermissoes == 'permissao-minima' || statusPermissoes == 'permissao-total') {
+            console.log('Começa o jogo!');
+            setStartGame(true);
+        }
+
+        if(statusPermissoes == 'negada'){
+            alert('Permissão de movimento foi negada. Para seguir com a experiência é necessário ir nas configurações do navegador e ative o acesso aos sensores.');
+        }
+    }
+
     
 
 
     return (
         <main className='Page Home'>
 
-            {!startGame &&
-            <div className={`Welcome grid ${statusPermissoes}`}>
+            {!startGame && (
+                
+            <div className={`Welcome ${enableGame} grid ${statusPermissoes}`}>
+                <div className="bg-welcome">
+                    {/* <img src={BgApp} alt="" /> */}
+                </div>
+
+
+                {!enableGame ? (
+
+                <>
                 <div className="top">
-                    <img className={step == 1 ? 'hidden' : ''} src={LogoBig} alt="Logo da campanha" />
+                    <img src={LogoBig} alt="Logo da campanha" />
                 </div>
 
-                <div className={`mid ${animateMode}`}>
-                    {step == 1 ? (
+                <div className='mid'>
+                    <h2>Para celebrar <br /> 1 Bilhão de corridas, <br /> <span>espalhamos vouchers  nas estrelas</span></h2>
 
-                    <h1>
-                        Sabia que tem muitos vouchers de 99moto espalhados <br /> nas estrelas?
-                    </h1>
-
-                    ) : (
-                    step == 2 ? (
-
-                    <h1>
-                        Para celebrar <br /> 1 bilhão <br /> de corridas, espalhamos vouchers em <br /> 1 bilhão <br /> de estrelas.
-                    </h1>
-
-                    ) : (
-
-                    <h1>
-                        Aponte <br /> seu dispositivo para cima <br /> e procure.
-                    </h1>
-
-                    )
-                    )}
+                    <button className='btn-primary' onClick={handleEntrarGame}>Entrar</button>
                 </div>
 
-                <div className={`bottom ${animateMode}`}>
-                    {step == 1 ? (
-
-                    <p>Aponte o celular para o céu <br /> e capture o seu.</p>
-
-                    ) : (
-                    step == 2 ? (
-
+                <div className='bottom'>
                     <p>Explore o céu <br /> e capture o seu.</p>
+                </div>                        
+                </>
 
-                    ) : (
+                ) : (
 
-                    <p>Quando encontrar, <br /> é só conduzir a moto <br /> pelos pontos sinalizados <br /> para capturar.</p>
-
-                    )
-                    )}
+                <>
+                <div className="top">
+                    <img src={LogoHeader} alt="Logo da campanha" />
                 </div>
 
-                {/* Controle de steps */}
-                <div className="controls">
-                    <div className='back' onClick={handleBackStep}>
-                        {step > 1 && <i className="bi bi-chevron-compact-left"></i>}
-                    </div>
-                    <div className='next' onClick={handleNextStep}>
-                        {step < 3 && <i className={`bi bi-chevron-compact-right ${step == 1 ? 'movendoRight' : ''}`}></i>}
+                <div className='mid'>
+                    <p>Aponte o <br /> dispositivo pra cima.</p>
+
+                    <img src={MaoInstrucao} alt="" />
+
+                    <div className="text-constelacao">
+                        <p>
+                            Quando achar  a constelação
+                            <span> guie a moto  pelos pontos.</span>
+                        </p>
+
+                        <img src={ConstelacaoInstrucao} alt="" />
                     </div>
                 </div>
+
+                <div className='bottom' onClick={handleStartGame}>
+                    <img src={MotoStart} alt="" />
+                    <p>Começar</p>
+                </div>
+                </>
+
+                )}
             </div>
-            }
+
+            )}
 
             {enableGame &&
             <AframeGame startGame={startGame} setStartGame={setStartGame} /> 
