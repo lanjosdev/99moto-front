@@ -1,0 +1,16 @@
+body {
+    background-color: pink;
+    display: flex;
+    justify-content: center;
+
+    .text {
+        position: absolute;
+        text-align: center;
+        bottom: 70px;
+
+        h2 {
+            font-size: 2.8rem;
+            letter-spacing: 0.8px;
+        }
+    }
+}

@@ -19,7 +19,8 @@ import './style.css';
 
 export function AframeGame({ startGame, setStartGame }) {
     // const [startGame, setStartGame] = useState(false);
-    // const entityRef = useRef(null);
+    // const iframeRef = useRef(null);
+
 
     useEffect(()=> {
         AFRAME.registerComponent('detect-start-game', {
@@ -119,6 +120,12 @@ export function AframeGame({ startGame, setStartGame }) {
                     {/* </div> */}
                 </div>
             </div>
+
+            <iframe
+                src="https://10.10.0.221:5173/drag/"
+                loading="eager"
+            >
+            </iframe>
 
             <div className={`rodape ${!startGame ? 'hidden' : ''}`}>
                 <img src={logoHeader} alt="" />

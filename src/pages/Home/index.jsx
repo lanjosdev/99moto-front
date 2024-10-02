@@ -90,9 +90,23 @@ export default function Home() {
         {
             console.log('Effect /home');
 
+            const handleIframeMessage = (event)=> {
+                // Filtra a origem da mensagem por questões de segurança
+                if(event.origin !== 'https://10.10.0.221:5173') {
+                    return;
+                }
+    
+                if(event.data == 'ACABOU') {
+                    console.log('Mensagem recebida do iframe:', event.data);
+                    acaoFimJogo();
+                }
+            };
+            // Escuta as mensagens enviadas do iframe
+            window.addEventListener('message', handleIframeMessage);
+            document.addEventListener("fimJogo", acaoFimJogo);
+                
             // Adiciona o listener no documento
             document.addEventListener("orientacaoStatus", verificaPermissoes);
-            document.addEventListener("fimJogo", acaoFimJogo);
 
             // document.addEventListener('click', ()=> {
             //     // function requestFullScreen() {
@@ -113,8 +127,8 @@ export default function Home() {
         
             // Limpa o listener quando o componente desmontar
             return () => {
+                window.removeEventListener('message', handleIframeMessage);
                 document.removeEventListener("orientacaoStatus", verificaPermissoes);
-                document.removeEventListener("fimJogo", acaoFimJogo);
             };
         }
         initHome();

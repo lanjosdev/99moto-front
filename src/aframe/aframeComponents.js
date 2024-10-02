@@ -1,7 +1,7 @@
 console.log('Arquivo components aframe');
 import Cookies from "js-cookie";
 
-const eventoFimJogo = new Event("fimJogo");
+// const eventoFimJogo = new Event("fimJogo");
 const eventoPermissoesPermitidas = new CustomEvent('orientacaoStatus', {
     detail: { orientacao: 'Permitida', camera: 'Permitida' }
 });
@@ -171,7 +171,7 @@ AFRAME.registerComponent('set-stars', {
         }
         if(e.target.id == 'star5' && this.estrelas[this.targetStar].id == 'star5') {
             // alert('fim de jogo');
-            document.dispatchEvent(eventoFimJogo);
+            // document.dispatchEvent(eventoFimJogo);
         }
     }
 });
