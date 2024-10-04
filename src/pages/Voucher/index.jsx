@@ -17,7 +17,7 @@ import logo99 from '../../assets/logoBig.png';
 import './style.css';
 
 
-export default function Result() {
+export default function Voucher() {
     const [voucher, setVoucher] = useState('');
     
     const navigate = useNavigate();
@@ -40,11 +40,11 @@ export default function Result() {
 
 
     return (
-        <main className='Page Result'>
+        <main className='Page Voucher'>
 
             {voucher == '' ? (
 
-                <div className='Voucher grid'>
+                <div className='CVoucher grid'>
                     <div className='top'>
                         <h3>
                             Parabéns! <br />
@@ -66,7 +66,7 @@ export default function Result() {
 
             ) : (
 
-                <div className="Replay Voucher grid">
+                <div className="Replay CVoucher grid">
                     <div className='top'>
                         <h2>
                             Atingimos mais de 1 bilhão de corridas graças à você, obrigado!

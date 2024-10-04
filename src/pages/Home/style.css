@@ -36,7 +36,7 @@
         height: 100dvh;
         z-index: -1;
 
-        background-image: url(../../../bg-app.png);
+        background-image: url(./bg-app.png);
         background-position: center;
         background-size: cover;
         background-repeat: no-repeat;

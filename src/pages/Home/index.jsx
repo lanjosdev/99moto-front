@@ -3,7 +3,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from "js-cookie";
 
+// Config JSON:
+import config from '../../../public/configApp.json';
+
 // Components:
+// import { TelaHorario } from '../../components/TelaHorario/TelaHorario'
 import { AframeGame } from '../../components/aframe-game';
 import confetti from 'canvas-confetti';
 // import { toast } from "react-toastify";
@@ -23,18 +27,25 @@ import './style.css';
 
 
 export default function Home() {
-    // const [animateMode, setAnimateMode] = useState('');
+    const [jogoLiberado, setJogoLiberado] = useState(true);
     const [statusPermissoes, setStatusPermissoes] = useState('');
 
     const [enableGame, setEnableGame] = useState(false);
     const [startGame, setStartGame] = useState(false);
 
+    const BASE_URL = config.base_url;
+    console.log(BASE_URL);
     const navigate = useNavigate();
+    const hasVoucher = Cookies.get('voucher99');
+    const horaInicial = config.hora_inicio;
+    console.log(horaInicial)
+    const horaTermino = config.hora_termino;
+    console.log(horaTermino)
 
-    // const tokenCookie = Cookies.get('userToken');
 
     
     const acaoFimJogo = useCallback(() => {
+        //confetti
         var defaults = {
             spread: 360,
             ticks: 50,
@@ -63,81 +74,101 @@ export default function Home() {
         setTimeout(shoot, 0);
         setTimeout(shoot, 100);
         setTimeout(shoot, 200);
+        //confetti
         
-        setTimeout(()=> navigate('/result'), 1000);
+        setTimeout(()=> navigate('/voucher'), 1000);
     }, [navigate]);
 
     const verificaPermissoes = useCallback((e) => {
-        if(e.detail.orientacao == "Permitida") {
+        console.log('EVENTOOO', e.detail);
+        if(e.detail.orientacao == "Permitida" && e.detail.localizacao == "Permitida") {
             let status = 'permissao-minima';
 
             if(e.detail.camera == "Permitida") {
                 status = 'permissao-total';
             }
 
+            console.log(e.detail.camera == "Permitida" ? 'PERMISSAO TOTAL' : 'PERMISSAO MINIMA');
             setStatusPermissoes(status);
         } 
         else {
-            setStatusPermissoes('negada');
+            console.log('PERMISSOES INSUFICIENTES');
+            if(e.detail.orientacao == "Negada") {
+                setStatusPermissoes('negada');
+            }
+            else {
+                setStatusPermissoes('geo negada');
+            }
         }
         // else {
         //     //logica caso não siga quando orientacao e camera for negadas
         // }
     }, []);
 
-    useEffect(()=> {
-        async function initHome()
-        {
-            console.log('Effect /home');
+    const initListenerEvents = useCallback(()=> {
+        console.log('useCallback initListenerEvents');
 
-            const handleIframeMessage = (event)=> {
-                // Filtra a origem da mensagem por questões de segurança
-                if(event.origin !== 'https://10.10.0.221:5173') {
-                    return;
-                }
-    
-                if(event.data == 'ACABOU') {
-                    console.log('Mensagem recebida do iframe:', event.data);
-                    acaoFimJogo();
-                }
-            };
-            // Escuta as mensagens enviadas do iframe
-            window.addEventListener('message', handleIframeMessage);
-            document.addEventListener("fimJogo", acaoFimJogo);
-                
-            // Adiciona o listener no documento
-            document.addEventListener("orientacaoStatus", verificaPermissoes);
+        const handleIframeMessage = (event)=> {
+            // Filtra a origem da mensagem por questões de segurança
+            if(event.origin !== BASE_URL) {
+                return;
+            }
 
-            // document.addEventListener('click', ()=> {
-            //     // function requestFullScreen() {
-            //         const elem = document.documentElement;
-                  
-            //         if(elem.requestFullscreen) {
-            //           elem.requestFullscreen();
-            //         } else if(elem.mozRequestFullScreen) { // Firefox
-            //           elem.mozRequestFullScreen();
-            //         } else if(elem.webkitRequestFullscreen) { // Chrome, Safari, Opera
-            //           elem.webkitRequestFullscreen();
-            //         } else if(elem.msRequestFullscreen) { // IE/Edge
-            //           elem.msRequestFullscreen();
-            //         }
-            //     //   }
-                  
-            // })
+            if(event.data == 'ACABOU') {
+                console.log('Mensagem recebida do iframe:', event.data);
+                acaoFimJogo();
+            }
+        };
+        // Escuta as mensagens enviadas do iframe
+        window.addEventListener('message', handleIframeMessage);
         
-            // Limpa o listener quando o componente desmontar
-            return () => {
-                window.removeEventListener('message', handleIframeMessage);
-                document.removeEventListener("orientacaoStatus", verificaPermissoes);
-            };
+        // Adiciona o listener no documento
+        document.addEventListener("fimJogo", acaoFimJogo); //// achou estrela solitaria
+        document.addEventListener("permissaoStatus", verificaPermissoes);
+
+    
+        // Limpa o listener quando o componente desmontar
+        return () => {
+            window.removeEventListener('message', handleIframeMessage);
+            document.removeEventListener("permissaoStatus", verificaPermissoes);
+        };
+    }, [acaoFimJogo, verificaPermissoes, BASE_URL]);
+
+    useEffect(()=> {
+        function verificacaoInicial() {
+            console.log('Effect /Home');
+
+            if(!hasVoucher) {
+                const atual = new Date(); //cria uma nova instância do objeto Date 
+                const horaAtual = atual.getHours();
+                // const minutoAtual = atual.getMinutes();
+                console.log(horaAtual);
+                
+                if(horaAtual < horaInicial && horaAtual >= horaTermino) {
+                    console.log('BLOQUEIA');
+                    setJogoLiberado(false);
+                }
+            }
+            else {
+                console.log('rota /voucher');
+            }
         }
-        initHome();
-    }, [acaoFimJogo, verificaPermissoes]);
+        verificacaoInicial();
+    }, [hasVoucher, initListenerEvents, horaInicial, horaTermino]);
+
 
 
     function handleEntrarGame() 
-    { 
-        setEnableGame(true);
+    {
+        if(jogoLiberado) {
+            initListenerEvents();
+            setEnableGame(true);
+        }
+        else {
+            initListenerEvents();
+            setEnableGame(true);
+            ////setShowTelaBloqueio(true);
+        }
     }
 
     function handleStartGame() 
@@ -147,8 +178,13 @@ export default function Home() {
             setStartGame(true);
         }
 
-        if(statusPermissoes == 'negada'){
-            alert('Permissão de movimento foi negada. Para seguir com a experiência é necessário ir nas configurações do navegador e ative o acesso aos sensores.');
+        if(statusPermissoes == 'negada') {
+            console.log('Permissão de movimento/orientação do celular foi negada. Para seguir com a experiência é necessário ir nas configurações do navegador e ativar o acesso.');
+            alert('Permissão de movimento e/ou localização do celular foi negada. Para seguir com a experiência é necessário ir nas configurações do navegador e ativar o acesso.');
+        }
+        if(statusPermissoes == 'geo negada') {
+            console.log('Permissão de localização foi negada. Para seguir com a experiência é necessário ir nas configurações do navegador e ativar o acesso.');
+            alert('Permissão de localização foi negada. Para seguir com a experiência é necessário ir nas configurações do navegador e ativar o acesso.');
         }
     }
 
@@ -159,7 +195,6 @@ export default function Home() {
         <main className='Page Home'>
 
             {!startGame && (
-                
             <div className={`Welcome ${enableGame} grid ${statusPermissoes}`}>
                 <div className="bg-welcome">
                     {/* <img src={BgApp} alt="" /> */}
@@ -214,11 +249,10 @@ export default function Home() {
 
                 )}
             </div>
-
             )}
 
             {enableGame &&
-            <AframeGame startGame={startGame} setStartGame={setStartGame} /> 
+            <AframeGame startGame={startGame} setStartGame={setStartGame} statusPermissoes={statusPermissoes} />
             }  
                   
         </main>

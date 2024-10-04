@@ -3,7 +3,8 @@ import { Routes, Route } from "react-router-dom";
 
 // Pages:
 import Home from "./pages/Home";
-import Result from "./pages/Result";
+import Voucher from "./pages/Voucher";
+import Game from "./pages/Game";
 // import Fim from "./pages/Fim";
 // import Brocked from "./pages/Brocked";
 
@@ -16,7 +17,9 @@ export default function AppRoutes() {
         <Routes>
             <Route path="/" element={ <Home/> } />
 
-            <Route path="/result" element={ <Result/> } />
+            <Route path="/voucher" element={ <Voucher/> } />
+
+            <Route path="/game" element={ <Game/> } />
         </Routes>
     )
 }

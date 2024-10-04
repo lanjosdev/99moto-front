@@ -1,16 +1,27 @@
 console.log('Arquivo components aframe');
+// Config JSON:
+import config from '../../public/configApp.json';
+const EXPIRE_COOKIES = config.expire_cookies;
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
+/// orientacaoStatus
 
 // const eventoFimJogo = new Event("fimJogo");
-const eventoPermissoesPermitidas = new CustomEvent('orientacaoStatus', {
-    detail: { orientacao: 'Permitida', camera: 'Permitida' }
+const eventoPermissoesPermitidas = new CustomEvent('permissaoStatus', {
+    detail: { orientacao: 'Permitida', localizacao: 'Permitida', camera: 'Permitida' }
 });
-const eventoApenasOrientacao = new CustomEvent('orientacaoStatus', {
-    detail: { orientacao: 'Permitida', camera: 'Negada' }
+
+
+const eventoPermissoesNegadas = new CustomEvent('permissaoStatus', {
+    detail: { orientacao: 'Negada', localizacao: 'Negada', camera: 'Negada' }
 });
-const eventoPermissoesNegadas = new CustomEvent('orientacaoStatus', {
-    detail: { orientacao: 'Negada', camera: 'Negada' }
+const eventoLocalizacaoNegada = new CustomEvent('permissaoStatus', {
+    detail: { orientacao: 'Permitida', localizacao: 'Negada', camera: 'Negada' }
 });
+const eventoCameraNegada = new CustomEvent('permissaoStatus', {
+    detail: { orientacao: 'Permitida', localizacao: 'Permitida', camera: 'Negada' }
+});
+
 
 AFRAME.registerComponent('init-permissions', {
     schema: {
@@ -20,32 +31,37 @@ AFRAME.registerComponent('init-permissions', {
     init: function() {
         // Editar modal de solicitação de permissões:
         // device-orientation-permission-ui="denyButtonText: Rejeitar; allowButtonText: Aceitar; deviceMotionMessage: Texto aqui"
-        this.el.setAttribute('device-orientation-permission-ui', "allowButtonText: Entendi; deviceMotionMessage: Para seguir com a experiência é necessário permitir o acesso ao sensor de movimento/orientação e câmera do dispositivo.");
+        this.el.setAttribute('device-orientation-permission-ui', "allowButtonText: Entendi; deviceMotionMessage: Para seguir com a experiência é necessário permitir o acesso ao sensor de movimento, localização e câmera do dispositivo.");
 
         // this.el.addEventListener('deviceorientationpermissionrequested', ()=> alert('Para seguir com a experiência é necessario autorizar acesso ao movimento e câmera do celular.'));
+
         // Mensagem quando o acesso for negado:
         this.el.addEventListener('deviceorientationpermissionrejected', ()=> {
             document.dispatchEvent(eventoPermissoesNegadas);
+            console.log('Status: Permissão de movimento foi negada. Para permitir o acesso, vá para as configurações do navegador e ative o acesso aos sensores.');
             alert('Status: Permissão de movimento foi negada. Para permitir o acesso, vá para as configurações do navegador e ative o acesso aos sensores.');
         });
         
         
         if(window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission) {
         // Para iOS 13+:
-            Cookies.set('device99', 'iphone', { expires: 7 });
+            Cookies.set('device99', 'iphone', { expires: EXPIRE_COOKIES });
             this.el.addEventListener('deviceorientationpermissiongranted', ()=> {
                 // Verifica se as permissões de movimento foi consedido
                 DeviceMotionEvent.requestPermission()
                 .then(response => {
                     if(response === 'granted') {
                         // Permissão aceita
-                        this.initCamera();
+                        /////this.initCamera();
+                        this.getLocation();
                     }
                     else {
                         // Permissão negada
-                        ////Não seguir no jogo
-                        document.dispatchEvent(eventoPermissoesNegadas);
-                        alert('Foi negado o acesso ao movimento/orientação do dispositivo. Para permitir o acesso, vá para as configurações do navegador e ative o acesso aos sensores.');
+                        // alert('Foi negado o acesso ao movimento/orientação do dispositivo. Para permitir o acesso, vá para as configurações do navegador e ative o acesso aos sensores.');
+                        //Não seguir no jogo
+                        //// document.dispatchEvent(eventoPermissoesNegadas);
+                        console.log('Foi negado o acesso ao movimento/orientação do celular. Para permitir o acesso, vá para as configurações do navegador e ative o acesso aos sensores.');
+                        alert('Foi negado o acesso ao movimento/orientação do celular. Para permitir o acesso, vá para as configurações do navegador e ative o acesso aos sensores.');
                     }
                 })
                 .catch(error => {
@@ -55,12 +71,59 @@ AFRAME.registerComponent('init-permissions', {
         }
         else {
         // Para dispositivos que não solicita permissão de deviceorientation:
-            Cookies.set('device99', 'android', { expires: 7 });
-            this.initCamera();
+            Cookies.set('device99', 'android', { expires: EXPIRE_COOKIES });
+            /////this.initCamera();
+            this.getLocation();
         }
     },
     
+    getLocation: function() {
+        console.log('Geolocalização');
+
+        if("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition((position)=> {
+                // const eventoGeolocazicao = new CustomEvent('geolocalizacao', {
+                //     detail: {latitude: position.coords.latitude, longitude: position.coords.longitude}
+                // });
+                let geoLocation = {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                }
+                console.log(geoLocation);
+
+                Cookies.set('geoLocation99', JSON.stringify(geoLocation), { expires: EXPIRE_COOKIES });
+                this.initCamera();
+            }, 
+            (error)=> {
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        document.dispatchEvent(eventoLocalizacaoNegada);
+                        console.log('Status: Permissão de localização foi negada. Para permitir o acesso, vá para as configurações do navegador e ative o acesso aos sensores.');
+                        alert('Status: Permissão de localização foi negada. Para permitir o acesso, vá para as configurações do navegador e ative o acesso aos sensores.');
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        toast.error("Informação de localização indisponível.");
+                        break;
+                    case error.TIMEOUT:
+                        toast.error("A requisição de localização expirou.");
+                        break;
+                    case error.UNKNOWN_ERROR:
+                        toast.error("Ocorreu um erro desconhecido.");
+                        break;
+                }
+            }, 
+            {
+                timeout: 10000 // Tempo limite de 10 segundos
+            }, this);
+        } else {
+            document.dispatchEvent(eventoLocalizacaoNegada);
+            toast.error("Geolocalização não é suportada pelo navegador.");
+        }
+    },
+
     initCamera: function() {
+        console.log('Camera');
+
         const videoRef = document.getElementById('videoRef');
         const videoConstraints = {
             width: { min: 1440, ideal: 1920, max: 1920 },
@@ -71,16 +134,6 @@ AFRAME.registerComponent('init-permissions', {
         
         // Verifica se o navegador suporta getUserMedia
         if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            // try {
-            //     const stream = await navigator.mediaDevices.getUserMedia({ video:videoConstraints });
-            //     videoRef.srcObject = stream;
-            //     videoRef.play();
-            // } 
-            // catch(error) {
-            //     console.error('Erro ao acessar a câmera:', error);
-            //     // Exibir uma mensagem amigável para o usuário
-            //     alert('Não foi possível acessar a câmera. Para permitir o acesso, vá para as configurações do navegador e ative o acesso.');
-            // }
             navigator.mediaDevices.getUserMedia({ video: videoConstraints })
                 .then(stream => {
                     videoRef.srcObject = stream;
@@ -90,8 +143,8 @@ AFRAME.registerComponent('init-permissions', {
                 .catch(error => {
                     console.error('Erro ao acessar a câmera: ', error);
                     // Exibir uma mensagem amigável para o usuário
-                    document.dispatchEvent(eventoApenasOrientacao);
-                    alert('Não foi possível acessar a câmera. Para permitir o acesso, vá para as configurações do navegador e ative o acesso (após isso atualize a página).');
+                    document.dispatchEvent(eventoCameraNegada);
+                    toast.info('Não foi possível acessar a câmera.');
                 });
         } 
         else {
