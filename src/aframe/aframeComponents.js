@@ -6,6 +6,7 @@ import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 /// orientacaoStatus
 
+export function initAframe() {
 // const eventoFimJogo = new Event("fimJogo");
 const eventoPermissoesPermitidas = new CustomEvent('permissaoStatus', {
     detail: { orientacao: 'Permitida', localizacao: 'Permitida', camera: 'Permitida' }
@@ -228,3 +229,4 @@ AFRAME.registerComponent('set-stars', {
         }
     }
 });
+}
