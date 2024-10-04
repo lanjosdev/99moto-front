@@ -1,14 +1,12 @@
 // Hooks / Funcionalidades / Libs:
 import { useState, useEffect } from 'react';
-import Cookies from "js-cookie";
 import 'aframe';
 import 'aframe-look-at-component';
 
 // Script A-frame customizados:
-import '../../aframe/aframeComponents';
+// import '../../aframe/aframeComponents';
 
-import { USER_COORDINATES } from '../../API/userApi';
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 
 // Config JSON:
 import config from '../../../public/configApp.json';
@@ -21,19 +19,19 @@ import setaMoto from '../../assets/seta-guia.png';
 import logoHeader from '../../assets/logo-header.png';
 
 // Estilo:
-import './style.css';
+import './aframeGame.css';
 
 
-export function AframeGame({ startGame, setStartGame, statusPermissoes }) {
-    const [idUser, setIdUser] = useState(null);
-    // const [areaPromo, setAreaPromo] = useState(null);
+export function AframeGame({ startGame, setStartGame }) {
     // const iframeRef = useRef(null);
-
-    const BASE_URL = config.base_url;
-    const hasGeoLocation = Cookies.get('geoLocation99');
+    const IFRAME_URL = config.dominio_iframe;
 
 
     useEffect(()=> {
+        console.log('Effect AframeGame.jsx');
+
+        if(!AFRAME.components['detect-start-game']) 
+        {
         AFRAME.registerComponent('detect-start-game', {
             schema: { type: 'boolean' },
 
@@ -53,71 +51,66 @@ export function AframeGame({ startGame, setStartGame, statusPermissoes }) {
 
             initGame: function() {
                 if(this.data) {
-                    console.log('START GAME');
+                    console.log('START GAME COM MOVIMENTO');
                     setStartGame(true); 
 
                     this.el.setAttribute('detect-start-game', 'false');
                 }
             },
         });
+        }
     }, []);
 
-    useEffect(()=> {
-        // console.log('postttt')
-        async function postGeolocationAPI() {
-            if(statusPermissoes == 'permissao-minima' || statusPermissoes == 'permissao-total') {
-                console.log('postttt')
-                const today = new Date();
-                const month = today.getMonth() + 1;
-                const year = today.getFullYear();
-                const date = today.getDate();
-                const hours = today.getHours();
-                const minutes = today.getMinutes();
-                const seconds = today.getSeconds();
+    // useEffect(()=> {
+    //     // console.log('postttt')
+    //     async function postGeolocationAPI() {
+    //         if(statusPermissoes == 'permissao-minima' || statusPermissoes == 'permissao-total') {
+    //             console.log('postttt')
+    //             const today = new Date();
+    //             const month = today.getMonth() + 1;
+    //             const year = today.getFullYear();
+    //             const date = today.getDate();
+    //             const hours = today.getHours();
+    //             const minutes = today.getMinutes();
+    //             const seconds = today.getSeconds();
 
-                const currentDate = date + "-" + month + "-" + year + " " + hours + ":" + minutes + ":" + seconds;
-                const hoursFormated = currentDate.split(' ');
-                const hoursFinal = hoursFormated[1];
+    //             const currentDate = date + "-" + month + "-" + year + " " + hours + ":" + minutes + ":" + seconds;
+    //             const hoursFormated = currentDate.split(' ');
+    //             const hoursFinal = hoursFormated[1];
                 
-                let { latitude, longitude } = JSON.parse(hasGeoLocation);
+    //             let { latitude, longitude } = JSON.parse(hasGeoLocation);
                 
 
-                if(latitude !== "" && longitude !== "" && currentDate !== "") {    
-                    console.log(latitude);
-                    console.log(longitude);
-                    console.log(currentDate);                
-                    const response = await USER_COORDINATES(latitude, longitude, currentDate);
-                    console.log(response);
+    //             if(latitude !== "" && longitude !== "" && currentDate !== "") {               
+    //                 const response = await USER_COORDINATES(latitude, longitude, currentDate);
+    //                 console.log(response);
                 
-                    if(hoursFinal < '17:45:00') {
-                        console.log('fora do horário de participação');
-                    }
+    //                 if(hoursFinal < '17:45:00') {
+    //                     console.log('fora do horário de participação');
+    //                 }
                     
-                    if(response.success === false) {
-                        console.log('Erro: ', response.message);
-                        console.log('ID do Usuário: ', response.idUser);
-                        return; // Aqui estava faltando
-                    }
+    //                 if(response.success === false) {
+    //                     console.log('Erro: ', response.message);
+    //                     console.log('ID do Usuário: ', response.idUser);
+    //                     return; // Aqui estava faltando
+    //                 }
                 
-                    if(response.success === true) {
-                        console.log('Requisição bem-sucedida.');
-                        console.log('ID do Usuário: ', response.idUser);
+    //                 if(response.success === true) {
+    //                     console.log('Requisição bem-sucedida.');
+    //                     console.log('ID do Usuário: ', response.idUser);
                 
-                        // Usando o idUser corretamente no navigate
-                        const idUser = response.idUser;
-                        // navigate(`/get-vouchers/${idUser}`);
-                    }
-                }
-                
-
-
-            }
-            else {
-                console.log('SEM LOCALIZAÇÃO PARA ENVIAR PARA API');
-            }
-        }
-        postGeolocationAPI();
-    }, [hasGeoLocation, statusPermissoes]);
+    //                     // Usando o idUser corretamente no navigate
+    //                     const idUser = response.idUser;
+    //                     // navigate(`/get-vouchers/${idUser}`);
+    //                 }
+    //             }
+    //         }
+    //         else {
+    //             console.log('SEM LOCALIZAÇÃO PARA ENVIAR PARA API');
+    //         }
+    //     }
+    //     postGeolocationAPI();
+    // }, [hasGeoLocation, statusPermissoes]);
 
 
 
@@ -184,11 +177,15 @@ export function AframeGame({ startGame, setStartGame, statusPermissoes }) {
                 </div>
             </div>
 
-            <iframe
-                src={BASE_URL + '/drag/'}
+
+            {/* iframe mini-game drag and drop */}
+            {/* <iframe
+                src={IFRAME_URL}
                 loading="eager"
             >
-            </iframe>
+            </iframe> */}
+            {/* iframe mini-game drag and drop */}
+
 
             <div className={`rodape ${!startGame ? 'hidden' : ''}`}>
                 <img src={logoHeader} alt="" />

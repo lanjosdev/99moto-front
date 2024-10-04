@@ -1,5 +1,5 @@
 // Hooks / Funcionalidades / Libs:
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from "js-cookie";
 
@@ -7,7 +7,6 @@ import Cookies from "js-cookie";
 import config from '../../../public/configApp.json';
 
 // Components:
-// import { TelaHorario } from '../../components/TelaHorario/TelaHorario'
 // import { toast } from "react-toastify";
 
 // Utils:
@@ -25,6 +24,7 @@ export default function Home() {
     const [jogoLiberado, setJogoLiberado] = useState(true);
 
     const navigate = useNavigate();
+
     const hasVoucher = Cookies.get('voucher99');
     const horaInicial = config.hora_inicio;
     const horaTermino = config.hora_termino;
@@ -38,40 +38,41 @@ export default function Home() {
             if(!hasVoucher) {
                 const atual = new Date(); //cria uma nova instância do objeto Date 
                 const horaAtual = atual.getHours();
-                // const minutoAtual = atual.getMinutes();
-                console.log(horaAtual);
+                const minutoAtual = atual.getMinutes();
+                console.log(horaAtual, minutoAtual);
                 
-                if(horaAtual < horaInicial && horaAtual >= horaTermino) {
+                if((horaAtual < horaInicial) || (horaAtual == horaTermino && minutoAtual > 0)) {
+                    // if {
+                    //     console.log('BLOQUEIA');
+                    //     setJogoLiberado(false);
+                    // }
                     console.log('BLOQUEIA');
                     setJogoLiberado(false);
                 }
             }
             else {
-                console.log('rota /voucher');
+                //// Direciona p/ rota de voucher
+                navigate('/voucher');
             }
         }
         verificacaoInicial();
-    }, [hasVoucher, horaInicial, horaTermino]);
+    }, [hasVoucher, horaInicial, horaTermino, navigate]);
 
 
 
-    function handleEntrarGame() 
-    {
-        navigate('/game');
-        if(jogoLiberado) {
-            //aqui é navigate(/game)
-        }
-        else {
-            ////setShowTelaBloqueio(true);
-        }
-    }  
+    // function handleEntrarGame() 
+    // {
+    //     if(jogoLiberado) {
+    //         //aqui é navigate(/game)
+    //     }
+    // }  
 
 
     return (
         <main className='Page Home'>
 
             <div className='Welcome grid'>
-                <div className="bg-welcome">
+                <div className="bg-app">
                     {/* <img src={BgApp} alt="" /> */}
                 </div>
 
@@ -80,14 +81,21 @@ export default function Home() {
                 </div>
 
                 <div className='mid'>
-                    <h2>Para celebrar <br /> 1 Bilhão de corridas, <br /> <span>espalhamos vouchers  nas estrelas</span></h2>
+                    <h2>
+                        Para celebrar 
+                        <span className='text-yellow'>1 Bilhão de corridas,</span>  
+                        <span>espalhamos cupons <br /> nas estrelas</span>
+                    </h2>
 
-                    <button className='btn-primary' onClick={handleEntrarGame}>Entrar</button>
-                    <a href="/game">Entrar</a>
+                    <button className='btn-primary' onClick={()=> navigate('/game')}>Entrar</button>
+                    {/* <a className={jogoLiberado ? 'btn-primary' : ''} href="/game">Entrar</a> */}
                 </div>
 
                 <div className='bottom'>
-                    <p>Explore o céu <br /> e capture o seu.</p>
+                    <p>
+                        Explore o céu <br />
+                        entre {horaInicial}h e {horaTermino}h <br />
+                        para capturar o seu.</p>
                 </div>                        
             </div>
                   
