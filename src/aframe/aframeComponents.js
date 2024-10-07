@@ -23,6 +23,9 @@ const eventoCameraNegada = new CustomEvent('permissaoStatus', {
     detail: 'permissao-minima'
 });
 
+const eventoStartGame = new Event('msgStartGame');
+// const eventoFindStar = new Event('msgFindStar');
+
 
 // Componentes A-frame customizados:
 AFRAME.registerComponent('init-permissions', {
@@ -188,12 +191,17 @@ AFRAME.registerComponent('set-stars', {
         
         // Loop pela array this.estrelas
         this.estrelas = this.el.children;
-        for (let i = 0; i < this.estrelas.length; i++) {
-            this.estrelas[i].object3D.position.set(coordenadaAtiva['estrela' + (i + 1)].x, coordenadaAtiva['estrela' + (i + 1)].y, coordenadaAtiva['estrela' + (i + 1)].z);
 
-            this.estrelas[i].setAttribute('look-at', '#camera-target');
-            this.estrelas[i].addEventListener('mouseenter', (e) => this.collisionStar(e));
-        }
+        // for (let i = 0; i < this.estrelas.length; i++) {
+        //     this.estrelas[i].object3D.position.set(coordenadaAtiva['estrela' + (i + 1)].x, coordenadaAtiva['estrela' + (i + 1)].y, coordenadaAtiva['estrela' + (i + 1)].z);
+
+        //     this.estrelas[i].setAttribute('look-at', '#camera-target');
+        //     this.estrelas[i].addEventListener('mouseenter', (e) => this.collisionStar(e));
+        // }
+        this.estrelas[0].object3D.position.set(coordenadaAtiva['estrela1'].x, coordenadaAtiva['estrela1'].y, coordenadaAtiva['estrela1'].z);
+
+        this.estrelas[0].setAttribute('look-at', '#camera-target');
+        this.estrelas[0].addEventListener('mouseenter', (e) => this.collisionStar(e));
 
         // Seta a estrela alvo do momento
         this.targetStar = 0;
@@ -223,16 +231,46 @@ AFRAME.registerComponent('set-stars', {
         console.log(e.target.id);
         console.log(this.estrelas[this.targetStar].id);
 
-        if(e.target.id == this.estrelas[this.targetStar].id && this.targetStar < 4) {
-            this.miraMoto.classList.add("animate-brilho");
-            this.estrelas[this.targetStar].removeAttribute('animation');
-            this.targetStar++;
-            this.activeStar(this.targetStar);
-            setTimeout(()=> this.miraMoto.classList.remove("animate-brilho"), 800);
-        }
-        if(e.target.id == 'star5' && this.estrelas[this.targetStar].id == 'star5') {
-            // alert('fim de jogo');
-            // document.dispatchEvent(eventoFimJogo);
-        }
+        console.log('ABRE IFRAME');
+
+        // if(e.target.id == this.estrelas[this.targetStar].id && this.targetStar < 4) {
+        //     this.miraMoto.classList.add("animate-brilho");
+        //     this.estrelas[this.targetStar].removeAttribute('animation');
+        //     this.targetStar++;
+        //     this.activeStar(this.targetStar);
+        //     setTimeout(()=> this.miraMoto.classList.remove("animate-brilho"), 800);
+        // }
+        // if(e.target.id == 'star5' && this.estrelas[this.targetStar].id == 'star5') {
+        //     // alert('fim de jogo');
+        //     // document.dispatchEvent(eventoFimJogo);
+        // }
     }
+});
+
+AFRAME.registerComponent('detect-start-game', {
+    schema: { type: 'boolean' },
+
+    init: function() {
+        // console.log(this.data)
+        this.el.addEventListener("mouseenter", ()=> this.initGame());  
+        
+        document.addEventListener("permissaoStatus", (e)=> {
+            if(e.detail == 'permissao-minima' || e.detail == 'permissao-total') {
+                setTimeout(()=> this.el.classList.add('collidable'), 3800);
+            }
+            //// else {
+            //     setTimeout(()=> alert('Permissão de movimento e/ou localização do celular foi negada. Para seguir com a experiência é necessário ir nas configurações do navegador e ative o acesso.'), 8000);
+            // }
+        });
+    },
+
+    initGame: function() {
+        if(this.data) {
+            console.log('START GAME COM MOVIMENTO');
+            document.dispatchEvent(eventoStartGame);
+
+            ////
+            this.el.setAttribute('detect-start-game', 'false');
+        }
+    },
 });

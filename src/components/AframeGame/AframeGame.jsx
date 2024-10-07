@@ -1,5 +1,5 @@
 // Hooks / Funcionalidades / Libs:
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 // import 'aframe';
 // import 'aframe-look-at-component';
 
@@ -22,7 +22,7 @@ import logoHeader from '../../assets/logo-header.png';
 import './aframeGame.css';
 
 
-export function AframeGame({ startGame, handleStartGame }) {
+export function AframeGame({ startGame }) {
     // const iframeRef = useRef(null);
     const IFRAME_URL = config.dominio_iframe;
 
@@ -30,90 +30,37 @@ export function AframeGame({ startGame, handleStartGame }) {
     useEffect(()=> {
         console.log('Effect AframeGame.jsx');
 
-        if(!AFRAME.components['detect-start-game']) 
-        {
-        AFRAME.registerComponent('detect-start-game', {
-            schema: { type: 'boolean' },
+        // if(!AFRAME.components['detect-start-game']) 
+        // {
+        // AFRAME.registerComponent('detect-start-game', {
+        //     schema: { type: 'boolean' },
 
-            init: function() {
-                // console.log(this.data)
-                this.el.addEventListener("mouseenter", ()=> this.initGame());  
+        //     init: function() {
+        //         // console.log(this.data)
+        //         this.el.addEventListener("mouseenter", ()=> this.initGame());  
                 
-                document.addEventListener("permissaoStatus", (e)=> {
-                    if(e.detail == 'permissao-minima' || e.detail == 'permissao-total') {
-                        setTimeout(()=> this.el.classList.add('collidable'), 3800);
-                    }
-                    //// else {
-                    //     setTimeout(()=> alert('Permissão de movimento e/ou localização do celular foi negada. Para seguir com a experiência é necessário ir nas configurações do navegador e ative o acesso.'), 8000);
-                    // }
-                });
-            },
+        //         document.addEventListener("permissaoStatus", (e)=> {
+        //             if(e.detail == 'permissao-minima' || e.detail == 'permissao-total') {
+        //                 setTimeout(()=> this.el.classList.add('collidable'), 3800);
+        //             }
+        //             //// else {
+        //             //     setTimeout(()=> alert('Permissão de movimento e/ou localização do celular foi negada. Para seguir com a experiência é necessário ir nas configurações do navegador e ative o acesso.'), 8000);
+        //             // }
+        //         });
+        //     },
 
-            initGame: function() {
-                if(this.data) {
-                    console.log('START GAME COM MOVIMENTO');
-                    // setStartGame(true); 
-                    handleStartGame();
+        //     initGame: function() {
+        //         if(this.data) {
+        //             console.log('START GAME COM MOVIMENTO');
+        //             setStartGame(true);
 
-                    ////
-                    this.el.setAttribute('detect-start-game', 'false');
-                }
-            },
-        });
-        }
+        //             ////
+        //             this.el.setAttribute('detect-start-game', 'false');
+        //         }
+        //     },
+        // });
+        // }
     }, []);
-
-    // useEffect(()=> {
-    //     // console.log('postttt')
-    //     async function postGeolocationAPI() {
-    //         if(statusPermissoes == 'permissao-minima' || statusPermissoes == 'permissao-total') {
-    //             console.log('postttt')
-    //             const today = new Date();
-    //             const month = today.getMonth() + 1;
-    //             const year = today.getFullYear();
-    //             const date = today.getDate();
-    //             const hours = today.getHours();
-    //             const minutes = today.getMinutes();
-    //             const seconds = today.getSeconds();
-
-    //             const currentDate = date + "-" + month + "-" + year + " " + hours + ":" + minutes + ":" + seconds;
-    //             const hoursFormated = currentDate.split(' ');
-    //             const hoursFinal = hoursFormated[1];
-                
-    //             let { latitude, longitude } = JSON.parse(hasGeoLocation);
-                
-
-    //             if(latitude !== "" && longitude !== "" && currentDate !== "") {               
-    //                 const response = await USER_COORDINATES(latitude, longitude, currentDate);
-    //                 console.log(response);
-                
-    //                 if(hoursFinal < '17:45:00') {
-    //                     console.log('fora do horário de participação');
-    //                 }
-                    
-    //                 if(response.success === false) {
-    //                     console.log('Erro: ', response.message);
-    //                     console.log('ID do Usuário: ', response.idUser);
-    //                     return; // Aqui estava faltando
-    //                 }
-                
-    //                 if(response.success === true) {
-    //                     console.log('Requisição bem-sucedida.');
-    //                     console.log('ID do Usuário: ', response.idUser);
-                
-    //                     // Usando o idUser corretamente no navigate
-    //                     const idUser = response.idUser;
-    //                     // navigate(`/get-vouchers/${idUser}`);
-    //                 }
-    //             }
-    //         }
-    //         else {
-    //             console.log('SEM LOCALIZAÇÃO PARA ENVIAR PARA API');
-    //         }
-    //     }
-    //     postGeolocationAPI();
-    // }, [hasGeoLocation, statusPermissoes]);
-
 
 
     return (
@@ -135,7 +82,7 @@ export function AframeGame({ startGame, handleStartGame }) {
 
                 {/* Entidades da cena */}
                 <a-camera id="camera-target" look-controls="reverseMouseDrag: true">
-                    <a-cursor color="red" raycaster="far: 100; objects: .collidable;" visible="false"></a-cursor>
+                    <a-cursor color="red" raycaster="far: 100; objects: .collidable;" visible="true"></a-cursor>
                 </a-camera>
 
 
@@ -147,14 +94,6 @@ export function AframeGame({ startGame, handleStartGame }) {
 
                 <a-entity className="constelacao" position="0 0 0" visible="true" set-stars>
                     <a-image id="star1" class="collidable" src="#starTexture" width="5.5" height="5.5" opacity="0.2"></a-image>
-                
-                    <a-image id="star2" class="collidable" src="#starTexture" width="5.5" height="5.5" opacity="0.2"></a-image>
-
-                    <a-image id="star3" class="collidable" src="#starTexture" width="5.5" height="5.5" opacity="0.2"></a-image>
-
-                    <a-image id="star4" class="collidable" src="#starTexture" width="5.5" height="5.5" opacity="0.2"></a-image>
-
-                    <a-image id="star5" class="collidable" src="#starTexture" width="5.5" height="5.5" opacity="0.2"></a-image>
                 </a-entity>
 
                 )}

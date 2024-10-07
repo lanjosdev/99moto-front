@@ -360,6 +360,7 @@ export default function Game() {
             //     setLocationUser(event?.detail);
             // };
             document.addEventListener("msgLocation", setLocalizacao);
+            document.addEventListener("msgStartGame", ()=>{console.log('oiiiiii'); setStartGame(true)});
 
 
             const handleIframeMessage = (event)=> {
@@ -390,10 +391,10 @@ export default function Game() {
     }, [hasVoucher, navigate, verificaPermissoes, setLocalizacao, acaoFimJogo, BASE_URL]);
 
 
-
-    async function postGeolocationAPI() {
+    const postGeolocationAPI = useCallback(async ()=> {
+        console.log('POSTTTT')
         console.log(locationUser)
-        console.log(statusPermissoes);
+        // console.log(statusPermissoes);
         if(locationUser) {
             const today = new Date();
             const month = today.getMonth() + 1;
@@ -438,11 +439,73 @@ export default function Game() {
         else {
             console.log('SEM LOCALIZAÇÃO PARA ENVIAR PARA API');
         }
-    }
+    }, [locationUser]);
+
+    useEffect(()=> {
+        // É executada quando state 'startGame' é atualizada:
+        function callPostAPI() {
+            console.log('Effect2 /Game');
+
+            if(startGame) {
+                postGeolocationAPI();
+            }
+        }
+        callPostAPI();
+    }, [startGame, postGeolocationAPI]);
+
+    
+    // async function postGeolocationAPI() {
+    //     console.log(locationUser)
+    //     console.log(statusPermissoes);
+    //     if(locationUser) {
+    //         const today = new Date();
+    //         const month = today.getMonth() + 1;
+    //         const year = today.getFullYear();
+    //         const date = today.getDate();
+    //         const hours = today.getHours();
+    //         const minutes = today.getMinutes();
+    //         const seconds = today.getSeconds();
+
+    //         const currentDate = date + "-" + month + "-" + year + " " + hours + ":" + minutes + ":" + seconds;
+    //         const hoursFormated = currentDate.split(' ');
+    //         const hoursFinal = hoursFormated[1];
+            
+    //         let { latitude, longitude } = locationUser;
+    //         console.log(latitude , longitude);
+            
+
+    //         if(latitude !== "" && longitude !== "" && currentDate !== "") {               
+    //             const response = await USER_COORDINATES(latitude, longitude, currentDate);
+    //             console.log(response);
+            
+    //             if(hoursFinal < '17:45:00') {
+    //                 console.log('fora do horário de participação');
+    //             }
+                
+    //             if(response.success === false) {
+    //                 console.log('Erro: ', response.message);
+    //                 console.log('ID do Usuário: ', response.idUser);
+    //                 return; // Aqui estava faltando
+    //             }
+            
+    //             if(response.success === true) {
+    //                 console.log('Requisição bem-sucedida.');
+    //                 console.log('ID do Usuário: ', response.idUser);
+            
+    //                 // Usando o idUser corretamente no navigate
+    //                 console.log(response.idUser);
+    //                 // navigate(`/get-vouchers/${idUser}`);
+    //             }
+    //         }
+    //     }
+    //     else {
+    //         console.log('SEM LOCALIZAÇÃO PARA ENVIAR PARA API');
+    //     }
+    // }
     function handleStartGame() 
     {
         console.log('Func start');
-        postGeolocationAPI();
+        // postGeolocationAPI();
 
         if(statusPermissoes == 'permissao-minima' || statusPermissoes == 'permissao-total') {
             console.log('Começa o jogo!');
@@ -500,7 +563,7 @@ export default function Game() {
 
             
             {ativaAframe &&
-            <AframeGame startGame={startGame} setStartGame={setStartGame} handleStartGame={handleStartGame} />
+            <AframeGame startGame={startGame} setStartGame={setStartGame} />
             }
             
         </main>
