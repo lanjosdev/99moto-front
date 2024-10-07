@@ -6,7 +6,7 @@
     &.permissao-total {
         background-color: #0000003d;
 
-        .bg-welcome {
+        .bg-app {
             opacity: 0.6;
         }
     }

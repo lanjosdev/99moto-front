@@ -1,7 +1,7 @@
 // Hooks / Funcionalidades / Libs:
 import { useState, useEffect } from 'react';
-import 'aframe';
-import 'aframe-look-at-component';
+// import 'aframe';
+// import 'aframe-look-at-component';
 
 // Script A-frame customizados:
 // import '../../aframe/aframeComponents';
@@ -22,7 +22,7 @@ import logoHeader from '../../assets/logo-header.png';
 import './aframeGame.css';
 
 
-export function AframeGame({ startGame, setStartGame }) {
+export function AframeGame({ startGame, handleStartGame }) {
     // const iframeRef = useRef(null);
     const IFRAME_URL = config.dominio_iframe;
 
@@ -40,8 +40,8 @@ export function AframeGame({ startGame, setStartGame }) {
                 this.el.addEventListener("mouseenter", ()=> this.initGame());  
                 
                 document.addEventListener("permissaoStatus", (e)=> {
-                    if(e.detail.orientacao == "Permitida" && e.detail.localizacao == "Permitida") {
-                        setTimeout(()=> this.el.classList.add('collidable'), 4000);
+                    if(e.detail == 'permissao-minima' || e.detail == 'permissao-total') {
+                        setTimeout(()=> this.el.classList.add('collidable'), 3800);
                     }
                     //// else {
                     //     setTimeout(()=> alert('Permissão de movimento e/ou localização do celular foi negada. Para seguir com a experiência é necessário ir nas configurações do navegador e ative o acesso.'), 8000);
@@ -52,8 +52,10 @@ export function AframeGame({ startGame, setStartGame }) {
             initGame: function() {
                 if(this.data) {
                     console.log('START GAME COM MOVIMENTO');
-                    setStartGame(true); 
+                    // setStartGame(true); 
+                    handleStartGame();
 
+                    ////
                     this.el.setAttribute('detect-start-game', 'false');
                 }
             },
